@@ -55,7 +55,7 @@ public class Main {
     public static void main(String[] args) {
         LinkedList<Integer> initDataList = new LinkedList();
         HashMap<Integer,LocalTime> initDataMap = new HashMap();
-        Main cache = new Main(10,0,10,initDataMap,initDataList);
+        Main cache = new Main(10,initDataList.size(),10,initDataMap,initDataList);
         for (int value = 0; value < 20 ; value++) {
             cache.addData(value);
         }
