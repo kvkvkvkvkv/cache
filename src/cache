@@ -1,0 +1,67 @@
+public class Main {
+
+    Integer maxCapacity;
+    Integer currentCapacity;
+    Integer timeToLive;
+    HashMap<Integer,LocalTime> dataTimeMap;
+    LinkedList<Integer> data;
+
+    public Main(Integer maxCapacity, Integer currentCapacity, Integer timeToLive, HashMap<Integer, LocalTime> dataTimeMap, LinkedList<Integer> data) {
+        this.maxCapacity = maxCapacity;
+        this.currentCapacity = currentCapacity;
+        this.timeToLive = timeToLive;
+        this.dataTimeMap = dataTimeMap;
+        this.data = data;
+    }
+
+    void addData(Integer value){
+        if(maxCapacity>0){
+            if (currentCapacity>=maxCapacity) {
+                removeFromList();
+            }
+            dataTimeMap.put(value,LocalTime.now());
+            currentCapacity++;
+            data.add(value);
+        }
+    }
+
+    void removeExpiredData(){
+        if(maxCapacity>0 && currentCapacity>0){
+            Integer firstData = data.getFirst();
+            Duration duration = Duration.between(dataTimeMap.get(firstData), LocalTime.now());
+            if (duration.getSeconds()>timeToLive) {
+                removeFromList();
+                dataTimeMap.remove(firstData);
+            }
+        }
+    }
+
+    private void removeFromList() {
+        dataTimeMap.remove(data.getFirst());
+        data.removeFirst();
+        currentCapacity--;
+    }
+
+    void getData(Integer value){
+        if (dataTimeMap.get(value)!=null) {
+            data.remove(value);
+            currentCapacity--;
+        }
+        //making it default to add data if not present
+        addData(value);
+    }
+
+    //dummy data
+    public static void main(String[] args) {
+        LinkedList<Integer> initDataList = new LinkedList();
+        HashMap<Integer,LocalTime> initDataMap = new HashMap();
+        Main cache = new Main(10,0,10,initDataMap,initDataList);
+        for (int value = 0; value < 20 ; value++) {
+            cache.addData(value);
+        }
+        cache.removeExpiredData();
+        cache.getData(3);
+        cache.getData(30);
+        cache.getData(10);
+    }
+}
